@@ -1,7 +1,8 @@
+
 package com.daffa.dokter2an;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -38,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ProgressBar progressLogin;
 
+    private SessionActivity session;
+
     private final ExecutorService executor =
             Executors.newSingleThreadExecutor();
 
@@ -49,14 +52,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Window window = getWindow();
-        window.setStatusBarColor(Color.TRANSPARENT);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.setNavigationBarColor(Color.TRANSPARENT);
-        }
+        window.setStatusBarColor(Color.TRANSPARENT);
+        window.setNavigationBarColor(Color.TRANSPARENT);
 
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                        | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
         );
 
         window.addFlags(
@@ -68,6 +70,19 @@ public class LoginActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         );
 
+        session = new SessionActivity(this);
+
+        String token = session.getToken();
+
+        if (token != null && !token.isEmpty()) {
+            setContentView(R.layout.activity_splash);
+            verifikasiUser(token, null, false);
+        } else {
+            setupLoginScreen();
+        }
+    }
+
+    private void setupLoginScreen() {
         setContentView(R.layout.activity_login);
 
         inputUsername = findViewById(R.id.inputUsername);
@@ -86,8 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         .getBounds().width()
                         - inputPassword.getPaddingEnd()) {
 
-                    int cursorPosition =
-                            inputPassword.getSelectionStart();
+                    int cursorPosition = inputPassword.getSelectionStart();
 
                     if (inputPassword.getTransformationMethod()
                             instanceof PasswordTransformationMethod) {
@@ -97,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
                         );
 
                     } else {
-
                         inputPassword.setTransformationMethod(
                                 PasswordTransformationMethod.getInstance()
                         );
@@ -115,11 +128,10 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         String[] roles = {
-                "Pilih Role",
+                "Choose Role",
                 "Admin",
                 "Doctor",
                 "Nurse",
-                "Patient",
                 "Receptionist"
         };
 
@@ -138,10 +150,23 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> prosesLogin());
     }
 
+    private void showLoginForm() {
+        if (inputUsername == null) {
+            setupLoginScreen();
+        }
+
+        inputUsername.setVisibility(View.VISIBLE);
+        inputPassword.setVisibility(View.VISIBLE);
+        spinnerRole.setVisibility(View.VISIBLE);
+        btnLogin.setVisibility(View.VISIBLE);
+
+        setLoading(false);
+    }
+
     private void prosesLogin() {
         String username = inputUsername.getText().toString().trim();
         String password = inputPassword.getText().toString();
-        String role = spinnerRole.getSelectedItem().toString();
+        String selectedRole = spinnerRole.getSelectedItem().toString();
 
         if (username.isEmpty()) {
             inputUsername.setError("Username wajib diisi");
@@ -164,13 +189,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        btnLogin.setEnabled(false);
-        progressLogin.setVisibility(View.VISIBLE);
+        setLoading(true);
 
         executor.execute(() -> {
             HttpURLConnection connection = null;
-            String message;
-            boolean success = false;
 
             try {
                 URL url = new URL(BASE_URL + "/token");
@@ -193,13 +215,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 String body =
                         "grant_type=" + URLEncoder.encode(
-                                "password", "UTF-8"
+                                "password",
+                                "UTF-8"
                         )
                                 + "&username=" + URLEncoder.encode(
-                                username, "UTF-8"
+                                username,
+                                "UTF-8"
                         )
                                 + "&password=" + URLEncoder.encode(
-                                password, "UTF-8"
+                                password,
+                                "UTF-8"
                         );
 
                 try (OutputStream output = connection.getOutputStream()) {
@@ -230,56 +255,204 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (status >= 200 && status < 300) {
-                    JSONObject json =
-                            new JSONObject(response.toString());
+                    JSONObject json = new JSONObject(response.toString());
 
                     String token = json.optString("access_token", "");
 
                     if (token.isEmpty()) {
-                        message = "Login gagal: token tidak ditemukan";
+                        runOnUiThread(() -> {
+                            setLoading(false);
+                            showMessage("Token tidak ditemukan");
+                        });
                     } else {
-                        success = true;
-                        message = "Login API berhasil sebagai " + role;
+                        runOnUiThread(() ->
+                                verifikasiUser(token, selectedRole, true)
+                        );
                     }
 
                 } else {
-                    JSONObject json =
-                            new JSONObject(response.toString());
+                    JSONObject json = new JSONObject(response.toString());
 
-                    message = json.optString(
+                    String message = json.optString(
                             "detail",
                             "Login gagal. HTTP " + status
                     );
+
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        showMessage(message);
+                    });
                 }
 
             } catch (Exception e) {
-                message = "Gagal menghubungi server: "
-                        + e.getMessage();
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    showMessage("Gagal menghubungi server: " + e.getMessage());
+                });
 
             } finally {
                 if (connection != null) {
                     connection.disconnect();
                 }
             }
-
-            final String resultMessage = message;
-            final boolean loginSuccess = success;
-
-            runOnUiThread(() -> {
-                progressLogin.setVisibility(View.GONE);
-                btnLogin.setEnabled(true);
-
-                Toast.makeText(
-                        LoginActivity.this,
-                        resultMessage,
-                        Toast.LENGTH_LONG
-                ).show();
-
-                if (loginSuccess) {
-                    inputPassword.setText("");
-                }
-            });
         });
+    }
+
+    private void verifikasiUser(
+            String token,
+            String selectedRole,
+            boolean saveToken
+    ) {
+        ClientActivity.request(
+                "/users/me",
+                "GET",
+                token,
+                null,
+                new ClientActivity.ApiCallback() {
+
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        String username = response.optString(
+                                "username",
+                                ""
+                        );
+
+                        String actualRole = getRole(username);
+
+                        runOnUiThread(() -> {
+                            if (actualRole == null) {
+                                session.clearSession();
+                                showLoginForm();
+                                showMessage("Role akun tidak dikenali");
+                                return;
+                            }
+
+                            if (selectedRole != null
+                                    && !selectedRole.equalsIgnoreCase(actualRole)) {
+
+                                showLoginForm();
+                                showMessage(
+                                        "Role akun tidak sesuai dengan pilihan"
+                                );
+                                return;
+                            }
+
+                            if (saveToken) {
+                                session.saveToken(token);
+                            }
+
+                            bukaDashboard(actualRole);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message, int statusCode) {
+                        runOnUiThread(() -> {
+                            if (statusCode == 401 || statusCode == 403) {
+                                session.clearSession();
+
+                                showLoginForm();
+                                showMessage(
+                                        "Sesi tidak valid atau sudah kedaluwarsa. Silakan login kembali."
+                                );
+                            } else {
+                                showLoginForm();
+                                showMessage(message);
+                            }
+                        });
+                    }
+                }
+        );
+    }
+
+    private String getRole(String username) {
+        switch (username.toLowerCase()) {
+            case "admin":
+                return "Admin";
+
+            case "doctor":
+                return "Doctor";
+
+            case "nurse":
+                return "Nurse";
+
+            case "receptionist":
+                return "Receptionist";
+
+            default:
+                return null;
+        }
+    }
+
+    private void bukaDashboard(String role) {
+        try {
+            Class<?> dashboardClass;
+
+            switch (role) {
+                case "Admin":
+                    dashboardClass = Class.forName(
+                            getPackageName() + ".AdminActivity"
+                    );
+                    break;
+
+                case "Doctor":
+                    dashboardClass = Class.forName(
+                            getPackageName() + ".DoctorActivity"
+                    );
+                    break;
+
+                case "Nurse":
+                    dashboardClass = Class.forName(
+                            getPackageName() + ".NurseActivity"
+                    );
+                    break;
+
+                case "Receptionist":
+                    dashboardClass = Class.forName(
+                            getPackageName() + ".ReceptionistActivity"
+                    );
+                    break;
+
+                default:
+                    showLoginForm();
+                    showMessage("Dashboard tidak ditemukan");
+                    return;
+            }
+
+            Intent intent = new Intent(this, dashboardClass);
+
+            intent.setFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
+            startActivity(intent);
+            finish();
+
+        } catch (ClassNotFoundException e) {
+            showLoginForm();
+            showMessage("Dashboard " + role + " belum dibuat");
+        }
+    }
+
+    private void setLoading(boolean loading) {
+        if (btnLogin != null) {
+            btnLogin.setEnabled(!loading);
+        }
+
+        if (progressLogin != null) {
+            progressLogin.setVisibility(
+                    loading ? View.VISIBLE : View.GONE
+            );
+        }
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(
+                this,
+                message,
+                Toast.LENGTH_LONG
+        ).show();
     }
 
     @Override

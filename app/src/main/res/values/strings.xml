@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">dokter2an</string>
+    <string name="patient_data_not_found">Patient data not found</string>
+    <string name="patient_id_missing">Patient ID is missing</string>
+    <string name="patient_data_read_failed">Failed to read patient data</string>
+    <string name="patient_id_format">Patient ID: %1$s</string>
+    <string name="complete_all_fields">Please complete all fields</string>
+    <string name="prepare_data_failed">Failed to prepare data</string>
+    <string name="updating_patient">Updating...</string>
+    <string name="update_patient">Update Patient</string>
+    <string name="patient_updated">Patient updated successfully</string>
+
 </resources>

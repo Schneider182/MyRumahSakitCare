@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F4F7FB">
+    android:background="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
             android:text="MY RUMAH SAKIT CARE"
-            android:textColor="#176B87"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -26,15 +26,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="36dp"
-            android:text="Silahkan login ke akun Anda"
-            android:textColor="#65758B"
+            android:text="Please log in to your account"
+            android:textColor="?attr/colorOnSurface"
+            android:alpha="0.7"
             android:textSize="15sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Username"
-            android:textColor="#263449"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
 
         <EditText
@@ -43,8 +44,11 @@
             android:layout_height="55dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="20dp"
-            android:backgroundTint="#176B87"
-            android:hint="Masukkan username"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface"
+            android:alpha="1"
+            android:hint="Enter username"
             android:inputType="text"
             android:padding="12dp"
             android:singleLine="true" />
@@ -53,15 +57,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Password"
-            android:textColor="#263449"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:layout_marginTop="12dp"
-            android:hint="Masukkan password"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurface"
+            android:hint="Enter password"
             android:inputType="textPassword"
             android:drawableEnd="@android:drawable/ic_menu_view"
             android:drawablePadding="12dp"
@@ -71,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Login As"
-            android:textColor="#263449"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
 
         <Spinner
@@ -80,15 +88,15 @@
             android:layout_height="55dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="28dp"
-            android:backgroundTint="#176B87" />
+            android:backgroundTint="?attr/colorPrimary" />
 
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:backgroundTint="#176B87"
+            android:backgroundTint="?attr/colorPrimary"
             android:text="LOGIN"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/colorOnPrimary"
             android:textStyle="bold" />
 
         <ProgressBar
@@ -97,7 +105,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:visibility="gone" />
-
 
     </LinearLayout>
 

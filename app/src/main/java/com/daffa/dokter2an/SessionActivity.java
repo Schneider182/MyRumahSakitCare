@@ -1,24 +1,33 @@
 package com.daffa.dokter2an;
 
-import android.os.Bundle;
+import android.content.Context;
+import android.content.SharedPreferences;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+public class SessionActivity {
 
-public class SessionActivity extends AppCompatActivity {
+    private static final String PREF_NAME = "HospitalSession";
+    private static final String KEY_TOKEN = "access_token";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_session);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+    private final SharedPreferences preferences;
+
+    public SessionActivity(Context context) {
+        preferences = context.getSharedPreferences(
+                PREF_NAME,
+                Context.MODE_PRIVATE
+        );
+    }
+
+    public void saveToken(String token) {
+        preferences.edit()
+                .putString(KEY_TOKEN, token)
+                .apply();
+    }
+
+    public String getToken() {
+        return preferences.getString(KEY_TOKEN, null);
+    }
+
+    public void clearSession() {
+        preferences.edit().clear().apply();
     }
 }

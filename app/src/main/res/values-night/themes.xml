@@ -1,0 +1,18 @@
+<resources>
+    <style name="Theme.Dokter2an" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#64B5C5</item>
+        <item name="colorOnPrimary">#003640</item>
+
+        <item name="colorSecondary">#6EE7B7</item>
+        <item name="colorOnSecondary">#003B2A</item>
+
+        <item name="colorSurface">#151D24</item>
+        <item name="colorOnSurface">#E3EDF2</item>
+
+        <item name="android:windowBackground">#151D24</item>
+        <item name="android:statusBarColor">#151D24</item>
+        <item name="android:navigationBarColor">#151D24</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
