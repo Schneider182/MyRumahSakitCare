@@ -1,18 +1,25 @@
-
 package com.daffa.dokter2an;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONObject;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 public class AddBillingActivity extends AppCompatActivity {
 
     private SessionActivity session;
+
     private EditText inputBillId, inputPatientId, inputTreatmentId;
-    private EditText inputBillDate, inputAmount, inputPaymentMethod, inputPaymentStatus;
+    private EditText inputBillDate, inputAmount;
+    private EditText inputPaymentMethod, inputPaymentStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +40,34 @@ public class AddBillingActivity extends AppCompatActivity {
         Button btnSaveBilling = findViewById(R.id.btnSaveBilling);
 
         btnBack.setOnClickListener(v -> finish());
+
+        inputBillDate.setOnClickListener(v -> showDatePicker());
+
         btnSaveBilling.setOnClickListener(v -> saveBilling());
+    }
+
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+
+        DatePickerDialog datePicker = new DatePickerDialog(
+                this,
+                (view, year, month, dayOfMonth) -> {
+                    String date = String.format(
+                            Locale.US,
+                            "%04d-%02d-%02d",
+                            year,
+                            month + 1,
+                            dayOfMonth
+                    );
+
+                    inputBillDate.setText(date);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+
+        datePicker.show();
     }
 
     private void saveBilling() {
@@ -41,12 +75,24 @@ public class AddBillingActivity extends AppCompatActivity {
         String patientId = inputPatientId.getText().toString().trim();
 
         if (billId.isEmpty() || patientId.isEmpty()) {
-            Toast.makeText(this, "Bill ID and Patient ID are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Bill ID and Patient ID are required",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String token = session.getToken();
+
+        if (token == null || token.isEmpty()) {
+            Toast.makeText(this,
+                    "Session expired. Please login again.",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
         try {
             JSONObject body = new JSONObject();
+
             body.put("bill_id", billId);
             body.put("patient_id", patientId);
             body.put("treatment_id", nullable(inputTreatmentId));
@@ -55,12 +101,22 @@ public class AddBillingActivity extends AppCompatActivity {
             body.put("payment_method", nullable(inputPaymentMethod));
             body.put("payment_status", nullable(inputPaymentStatus));
 
-            ClientActivity.request("/billing", "POST", session.getToken(), body,
+            ClientActivity.request(
+                    "/billing",
+                    "POST",
+                    token,
+                    body,
                     new ClientActivity.ApiCallback() {
                         @Override
                         public void onSuccess(JSONObject response) {
                             runOnUiThread(() -> {
-                                Toast.makeText(AddBillingActivity.this, "Billing added successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(
+                                        AddBillingActivity.this,
+                                        "Billing added successfully",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                setResult(RESULT_OK);
                                 finish();
                             });
                         }
@@ -68,12 +124,22 @@ public class AddBillingActivity extends AppCompatActivity {
                         @Override
                         public void onError(String message, int code) {
                             runOnUiThread(() ->
-                                    Toast.makeText(AddBillingActivity.this, message, Toast.LENGTH_LONG).show());
+                                    Toast.makeText(
+                                            AddBillingActivity.this,
+                                            message,
+                                            Toast.LENGTH_LONG
+                                    ).show()
+                            );
                         }
-                    });
+                    }
+            );
 
         } catch (Exception e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    e.getMessage(),
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 

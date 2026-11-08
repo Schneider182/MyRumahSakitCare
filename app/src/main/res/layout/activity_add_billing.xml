@@ -35,61 +35,117 @@
             android:text="Enter the invoice information"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Bill ID *"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/inputBillId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:hint="Bill ID *"
+            android:hint="Enter bill ID"
             android:inputType="text"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Patient ID *"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputPatientId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Patient ID *"
+            android:hint="Enter patient ID"
             android:inputType="text"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Treatment ID"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputTreatmentId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Treatment ID"
+            android:hint="Enter treatment ID"
             android:inputType="text"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Bill Date"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputBillDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Bill Date"
-            android:inputType="text"
+            android:hint="Select bill date"
+            android:focusable="false"
+            android:clickable="true"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Amount"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Amount"
-            android:inputType="text"
+            android:hint="Enter amount"
+            android:inputType="numberDecimal"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Payment Method"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputPaymentMethod"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Payment Method"
-            android:inputType="text"
+            android:hint="Enter payment method"
+            android:inputType="textCapWords"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Payment Status"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputPaymentStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Payment Status"
-            android:inputType="text"
+            android:hint="Enter payment status"
+            android:inputType="textCapWords"
             android:padding="14dp" />
 
         <com.google.android.material.button.MaterialButton

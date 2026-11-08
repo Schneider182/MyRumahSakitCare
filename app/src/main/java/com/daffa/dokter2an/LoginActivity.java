@@ -1,4 +1,3 @@
-
 package com.daffa.dokter2an;
 
 import android.content.Intent;
@@ -10,11 +9,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,7 +32,6 @@ import java.util.concurrent.Executors;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText inputUsername, inputPassword;
-    private Spinner spinnerRole;
     private Button btnLogin;
     private ProgressBar progressLogin;
 
@@ -76,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (token != null && !token.isEmpty()) {
             setContentView(R.layout.activity_splash);
-            verifikasiUser(token, null, false);
+            verifikasiUser(token, false);
         } else {
             setupLoginScreen();
         }
@@ -87,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
 
         inputUsername = findViewById(R.id.inputUsername);
         inputPassword = findViewById(R.id.inputPassword);
-        spinnerRole = findViewById(R.id.spinnerRole);
         btnLogin = findViewById(R.id.btnLogin);
         progressLogin = findViewById(R.id.progressLogin);
 
@@ -127,26 +122,6 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
 
-        String[] roles = {
-                "Choose Role",
-                "Admin",
-                "Doctor",
-                "Nurse",
-                "Receptionist"
-        };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                roles
-        );
-
-        adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item
-        );
-
-        spinnerRole.setAdapter(adapter);
-
         btnLogin.setOnClickListener(v -> prosesLogin());
     }
 
@@ -157,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
 
         inputUsername.setVisibility(View.VISIBLE);
         inputPassword.setVisibility(View.VISIBLE);
-        spinnerRole.setVisibility(View.VISIBLE);
         btnLogin.setVisibility(View.VISIBLE);
 
         setLoading(false);
@@ -166,7 +140,6 @@ public class LoginActivity extends AppCompatActivity {
     private void prosesLogin() {
         String username = inputUsername.getText().toString().trim();
         String password = inputPassword.getText().toString();
-        String selectedRole = spinnerRole.getSelectedItem().toString();
 
         if (username.isEmpty()) {
             inputUsername.setError("Username wajib diisi");
@@ -177,15 +150,6 @@ public class LoginActivity extends AppCompatActivity {
         if (password.isEmpty()) {
             inputPassword.setError("Password wajib diisi");
             inputPassword.requestFocus();
-            return;
-        }
-
-        if (spinnerRole.getSelectedItemPosition() == 0) {
-            Toast.makeText(
-                    this,
-                    "Pilih role terlebih dahulu",
-                    Toast.LENGTH_SHORT
-            ).show();
             return;
         }
 
@@ -266,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
                     } else {
                         runOnUiThread(() ->
-                                verifikasiUser(token, selectedRole, true)
+                                verifikasiUser(token, true)
                         );
                     }
 
@@ -298,11 +262,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void verifikasiUser(
-            String token,
-            String selectedRole,
-            boolean saveToken
-    ) {
+    private void verifikasiUser(String token, boolean saveToken) {
         ClientActivity.request(
                 "/users/me",
                 "GET",
@@ -324,16 +284,6 @@ public class LoginActivity extends AppCompatActivity {
                                 session.clearSession();
                                 showLoginForm();
                                 showMessage("Role akun tidak dikenali");
-                                return;
-                            }
-
-                            if (selectedRole != null
-                                    && !selectedRole.equalsIgnoreCase(actualRole)) {
-
-                                showLoginForm();
-                                showMessage(
-                                        "Role akun tidak sesuai dengan pilihan"
-                                );
                                 return;
                             }
 

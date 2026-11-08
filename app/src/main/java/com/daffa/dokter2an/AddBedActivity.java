@@ -1,3 +1,4 @@
+
 package com.daffa.dokter2an;
 
 import android.os.Bundle;
@@ -44,10 +45,30 @@ public class AddBedActivity extends AppCompatActivity {
         String monthText = inputMonth.getText().toString().trim();
         String service = inputService.getText().toString().trim();
 
-        if (weekText.isEmpty() || monthText.isEmpty() || service.isEmpty()) {
-            Toast.makeText(this,
-                    "Week, Month, and Service are required",
+        if (weekText.isEmpty()) {
+            inputWeek.setError("Week is required");
+            inputWeek.requestFocus();
+            return;
+        }
+
+        if (monthText.isEmpty()) {
+            inputMonth.setError("Month is required");
+            inputMonth.requestFocus();
+            return;
+        }
+
+        if (service.isEmpty()) {
+            inputService.setError("Service is required");
+            inputService.requestFocus();
+            return;
+        }
+
+        String token = session.getToken();
+
+        if (token == null || token.isEmpty()) {
+            Toast.makeText(this, "Session expired. Please login again.",
                     Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
@@ -55,7 +76,20 @@ public class AddBedActivity extends AppCompatActivity {
             int week = Integer.parseInt(weekText);
             int month = Integer.parseInt(monthText);
 
+            if (week < 1 || week > 53) {
+                inputWeek.setError("Week must be between 1 and 53");
+                inputWeek.requestFocus();
+                return;
+            }
+
+            if (month < 1 || month > 12) {
+                inputMonth.setError("Month must be between 1 and 12");
+                inputMonth.requestFocus();
+                return;
+            }
+
             JSONObject body = new JSONObject();
+
             body.put("week", week);
             body.put("month", month);
             body.put("service", service);
@@ -70,15 +104,22 @@ public class AddBedActivity extends AppCompatActivity {
             String event = inputEvent.getText().toString().trim();
             body.put("event", event.isEmpty() ? JSONObject.NULL : event);
 
-            ClientActivity.request("/hospital_beds", "POST",
-                    session.getToken(), body,
+            ClientActivity.request(
+                    "/hospital_beds",
+                    "POST",
+                    token,
+                    body,
                     new ClientActivity.ApiCallback() {
                         @Override
                         public void onSuccess(JSONObject response) {
                             runOnUiThread(() -> {
-                                Toast.makeText(AddBedActivity.this,
+                                Toast.makeText(
+                                        AddBedActivity.this,
                                         "Bed record added successfully",
-                                        Toast.LENGTH_SHORT).show();
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                setResult(RESULT_OK);
                                 finish();
                             });
                         }
@@ -86,21 +127,35 @@ public class AddBedActivity extends AppCompatActivity {
                         @Override
                         public void onError(String message, int code) {
                             runOnUiThread(() ->
-                                    Toast.makeText(AddBedActivity.this,
-                                            message, Toast.LENGTH_SHORT).show());
+                                    Toast.makeText(
+                                            AddBedActivity.this,
+                                            message,
+                                            Toast.LENGTH_LONG
+                                    ).show()
+                            );
                         }
-                    });
+                    }
+            );
 
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Week and Month must be valid numbers",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    "Week, Month, and other numeric fields must contain valid numbers",
+                    Toast.LENGTH_SHORT
+            ).show();
+
         } catch (Exception e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    "Failed to create bed record: " + e.getMessage(),
+                    Toast.LENGTH_LONG
+            ).show();
         }
     }
 
     private void putInteger(JSONObject body, String key, EditText input)
             throws Exception {
+
         String value = input.getText().toString().trim();
 
         if (value.isEmpty()) {

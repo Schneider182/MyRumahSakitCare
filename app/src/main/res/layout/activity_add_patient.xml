@@ -41,83 +41,183 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            android:alpha="0.7"
             android:text="Enter patient information below"
             android:textColor="?attr/colorOnSurface"
-            android:alpha="0.7"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp" />
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient Name"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Patient Name"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter patient name"
             android:inputType="textPersonName"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient ID"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputPatientId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Patient ID"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter patient ID"
             android:inputType="text"
             android:padding="14dp" />
 
-        <EditText
-            android:id="@+id/inputGender"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Gender (M/F)"
-            android:inputType="text"
-            android:padding="14dp" />
+            android:text="Gender"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/radioGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"
+                android:textColor="?attr/colorOnSurface" />
+
+            <RadioButton
+                android:id="@+id/radioFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="Female"
+                android:textColor="?attr/colorOnSurface" />
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputBirth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date of Birth (YYYY-MM-DD)"
-            android:inputType="date"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+            android:focusable="false"
+            android:hint="Select date of birth"
+            android:inputType="none"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contact Number"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputContact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Contact Number"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:hint="+62"
             android:inputType="phone"
+            android:text="+62"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Address"
-            android:inputType="textPostalAddress"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="top"
+            android:hint="Enter patient address"
+            android:inputType="textPostalAddress|textMultiLine"
+            android:minLines="2"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Insurance Provider"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputInsurance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Insurance Provider"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter insurance provider"
             android:inputType="text"
             android:padding="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registration Date"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputRegistration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Registration Date (YYYY-MM-DD)"
-            android:inputType="date"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+            android:focusable="false"
+            android:hint="Select registration date"
+            android:inputType="none"
             android:padding="14dp" />
 
         <Button
             android:id="@+id/btnSavePatient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="14dp"
             android:text="Save Patient"
-            android:layout_marginTop="24dp" />
+            android:textStyle="bold" />
 
     </LinearLayout>
+
 </ScrollView>

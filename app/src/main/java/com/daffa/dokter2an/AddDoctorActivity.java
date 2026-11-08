@@ -12,8 +12,8 @@ import org.json.JSONObject;
 
 public class AddDoctorActivity extends AppCompatActivity {
 
-    private EditText inputName, inputDoctorId, inputSpecialization,
-            inputPhone, inputExperience, inputBranch, inputEmail;
+    private EditText inputName, inputDoctorId, inputSpecialization;
+    private EditText inputPhone, inputExperience, inputBranch, inputEmail;
 
     private SessionActivity session;
 
@@ -45,11 +45,21 @@ public class AddDoctorActivity extends AppCompatActivity {
 
         if (name.isEmpty()) {
             inputName.setError("Doctor name is required");
+            inputName.requestFocus();
             return;
         }
 
         if (doctorId.isEmpty()) {
             inputDoctorId.setError("Doctor ID is required");
+            inputDoctorId.requestFocus();
+            return;
+        }
+
+        String token = session.getToken();
+
+        if (token == null || token.isEmpty()) {
+            Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
@@ -59,7 +69,13 @@ public class AddDoctorActivity extends AppCompatActivity {
             body.put("name", name);
             body.put("doctor_id", doctorId);
             body.put("specialization", inputSpecialization.getText().toString().trim());
-            body.put("phone_number", inputPhone.getText().toString().trim());
+            String phone = inputPhone.getText().toString().trim();
+
+            if (!phone.startsWith("+62")) {
+                phone = "+62" + phone.replaceFirst("^0+", "");
+            }
+
+            body.put("phone_number", phone);
             body.put("years_experience", inputExperience.getText().toString().trim());
             body.put("hospital_branch", inputBranch.getText().toString().trim());
             body.put("email", inputEmail.getText().toString().trim());
@@ -67,7 +83,7 @@ public class AddDoctorActivity extends AppCompatActivity {
             ClientActivity.request(
                     "/doctors",
                     "POST",
-                    session.getToken(),
+                    token,
                     body,
                     new ClientActivity.ApiCallback() {
                         @Override
@@ -79,19 +95,20 @@ public class AddDoctorActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT
                                 ).show();
 
+                                setResult(RESULT_OK);
                                 finish();
                             });
                         }
 
                         @Override
                         public void onError(String message, int code) {
-                            runOnUiThread(() ->
-                                    Toast.makeText(
-                                            AddDoctorActivity.this,
-                                            message,
-                                            Toast.LENGTH_LONG
-                                    ).show()
-                            );
+                            runOnUiThread(() -> {
+                                Toast.makeText(
+                                        AddDoctorActivity.this,
+                                        message,
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            });
                         }
                     }
             );

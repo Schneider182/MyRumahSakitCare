@@ -47,7 +47,6 @@
             android:backgroundTint="?attr/colorPrimary"
             android:textColor="?attr/colorOnSurface"
             android:textColorHint="?attr/colorOnSurface"
-            android:alpha="1"
             android:hint="Enter username"
             android:inputType="text"
             android:padding="12dp"
@@ -65,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="28dp"
             android:backgroundTint="?attr/colorPrimary"
             android:textColor="?attr/colorOnSurface"
             android:textColorHint="?attr/colorOnSurface"
@@ -74,21 +73,6 @@
             android:drawableEnd="@android:drawable/ic_menu_view"
             android:drawablePadding="12dp"
             android:padding="14dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login As"
-            android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spinnerRole"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="28dp"
-            android:backgroundTint="?attr/colorPrimary" />
 
         <Button
             android:id="@+id/btnLogin"
