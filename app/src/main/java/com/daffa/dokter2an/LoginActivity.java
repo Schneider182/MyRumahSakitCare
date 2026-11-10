@@ -347,7 +347,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 case "Doctor":
                     dashboardClass = Class.forName(
-                            getPackageName() + ".DoctorActivity"
+                            getPackageName() + ".Doctor_Dashboard_Activity"
                     );
                     break;
 
